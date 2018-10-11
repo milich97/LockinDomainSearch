@@ -12,14 +12,14 @@ PLLSys = @(t, z, tau_1, tau_2, omega_e_free)([omega_e_free - k_vco * (...
 sys = @(t,z) PLLSys(t, z, tau_1, tau_2, omega_e_free);
 Event = @(t, z, initial_theta_e)deal([1*((abs(z(1) - round(z(1)/2/pi)*2*pi) ...
     + abs(z(2)) + abs(z(3)) >= 1.e-4) && (abs(initial_theta_e - z(1)) >= 2*pi)),1,0]);
-len = 20;
+len = 200;
 %xoverFcn = @(t, z) Event(t, z);
 %options = odeset('RelTol', 1.e-3, 'AbsTol', 1.e-3, 'events', xoverFcn);
 view(-2,21);
 
 
 hold on;
-step=1;
+step=0.5;
 for x_1_initial=-3.1:step:3
     for x_2_initial=-6:step:6.2
         for theta_e_initial=-pi:step:pi
