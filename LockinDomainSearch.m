@@ -21,7 +21,6 @@ step=0.5;
 for x_1_initial=-3.1:step:3
     for x_2_initial=-6:step:6.2
         for theta_e_initial=-pi:step:pi
-            min=0;max=0;
             
             xoverFcn = @(t, z) Event(t, z, omega_e_free, tau_1, k_vco, theta_e_initial);
             options = odeset('RelTol', 1.e-3, 'AbsTol', 1.e-3, 'events', xoverFcn);
