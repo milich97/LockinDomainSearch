@@ -10,11 +10,9 @@ PLLSys = @(t, z, tau_1, tau_2, omega_e_free)([omega_e_free - k_vco * (...
     1 / tau_1 * z(2) + (tau_1 * tau_2 - 1) / tau_1 * z(3) + sin(z(1))...
     ),sin(z(1)),- tau_1 * z(3) + sin(z(1))]');
 sys = @(t,z) PLLSys(t, z, tau_1, tau_2, omega_e_free);
-Event = @(t, z, initial_theta_e)deal([1*((abs(z(1) - round(z(1)/2/pi)*2*pi) ...
-    + abs(z(2)) + abs(z(3)) >= 1.e-4) && (abs(initial_theta_e - z(1)) >= 2*pi)),1,0]);
+Event = @(t, z, omega_e_free,tau_1, k_vco, initial_theta_e)deal([1*((abs(z(1) - round(z(1)/2/pi)*2*pi) ...
+    + abs(z(2)-tau_1*omega_e_free/k_vco) + abs(z(3)) >= 1.e-4) && (abs(initial_theta_e - z(1)) >= 2*pi)),1,0]);
 len = 200;
-%xoverFcn = @(t, z) Event(t, z);
-%options = odeset('RelTol', 1.e-3, 'AbsTol', 1.e-3, 'events', xoverFcn);
 view(-2,21);
 
 
@@ -25,11 +23,9 @@ for x_1_initial=-3.1:step:3
         for theta_e_initial=-pi:step:pi
             min=0;max=0;
             
-            xoverFcn = @(t, z) Event(t, z, theta_e_initial);
+            xoverFcn = @(t, z) Event(t, z, omega_e_free, tau_1, k_vco, theta_e_initial);
             options = odeset('RelTol', 1.e-3, 'AbsTol', 1.e-3, 'events', xoverFcn);
-            [T,Y] = ode15s(sys, [0 len], [theta_e_initial x_1_initial x_2_initial], options);
-            %min_y = min(Y(:,1,1));
-            %max_y = max(Y(:,1,1));
+            [T,Y] = ode15s(sys, [0 len], [theta_e_initial x_1_initial x_2_initial], options);         
             min=theta_e_initial;
             max=theta_e_initial;
             
